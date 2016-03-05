@@ -6,7 +6,9 @@ use Ast;
 use Z3_MUTEX;
 use std::hash::{Hash, Hasher};
 use std::cmp::{PartialEq, Eq};
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
+use std::fmt;
+use std;
 
 macro_rules! unop {
     ( $f:ident, $z3fn:ident ) => {
@@ -284,3 +286,12 @@ impl<'ctx> PartialEq<Ast<'ctx>> for Ast<'ctx> {
 }
 
 impl<'ctx> Eq for Ast<'ctx> { }
+
+impl<'ctx> fmt::Debug for Ast<'ctx> {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        unsafe {
+            let slice = CStr::from_ptr(Z3_ast_to_string(self.ctx.z3_ctx, self.z3_ast));
+            write!(fmt, "{}", std::str::from_utf8(slice.to_bytes()).unwrap())
+        }
+    }
+}
