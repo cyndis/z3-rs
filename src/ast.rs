@@ -266,6 +266,17 @@ impl<'ctx> Drop for Ast<'ctx> {
     }
 }
 
+impl<'ctx> Clone for Ast<'ctx> {
+    fn clone(&self) -> Ast<'ctx> {
+        unsafe {
+            debug!("clone ast {:p}", self.z3_ast);
+            let guard = Z3_MUTEX.lock().unwrap();
+            Z3_inc_ref(self.ctx.z3_ctx, self.z3_ast);
+            std::mem::transmute_copy(self)
+        }
+    }
+}
+
 impl<'ctx> Hash for Ast<'ctx> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         unsafe {
