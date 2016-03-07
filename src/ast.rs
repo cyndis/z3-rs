@@ -181,6 +181,15 @@ impl<'ctx> Ast<'ctx> {
         }
     }
 
+    /// Computes a Craig interpolant between `self` and `other`, i.e., assuming `self` ^ `other`
+    /// is unsatisfiable, an ast `psi` that satisfies the following:
+    /// - `self` |= `psi`
+    /// - `psi` |= !`other`
+    /// - `psi` contains only variables in both `self` and `other`
+    pub fn interpolant(&self, other: &Ast<'ctx>) -> Option<Ast<'ctx>> {
+        ::interp::compute_interpolant(self, other)
+    }
+
     varop!(distinct, Z3_mk_distinct);
 
     // Boolean ops

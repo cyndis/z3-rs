@@ -70,3 +70,23 @@ fn test_solving_for_model() {
     assert!(xv + 2 > 7);
 }
 
+#[test]
+fn test_interpolation() {
+    let _ = env_logger::init();
+    let mut cfg = Config::new();
+    cfg.set_bool_param_value("PROOF", true);
+    cfg.set_bool_param_value("MODEL", true);
+    let ctx = Context::new(&cfg);
+
+    let x = ctx.named_bool_const("x");
+    let y = ctx.named_bool_const("y");
+
+    let left = x._eq(&ctx.from_bool(false));
+    let right = x._eq(&y).and(&[
+        &y._eq(&ctx.from_bool(true))
+    ]);
+
+    let ip = left.interpolant(&right);
+
+    assert!(format!("{:?}", ip.unwrap()) == "(not x)");
+}

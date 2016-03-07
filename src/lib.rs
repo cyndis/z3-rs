@@ -23,6 +23,7 @@ mod ast;
 mod solver;
 mod optimize;
 mod model;
+mod interp;
 
 // Z3 appears to be only mostly-threadsafe, a few initializers
 // and such race; so we mutex-guard all access to the library.
